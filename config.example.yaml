@@ -1,0 +1,8 @@
+dataFile: ./events.json
+prowlarr:
+  url: https://prowlarr-url.com
+  apiKey: aaaaaa
+qbitorrent:
+  url: https://qbitorrenturl.com
+  user: user
+  password: pass
