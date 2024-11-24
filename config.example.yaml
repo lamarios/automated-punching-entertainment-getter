@@ -6,3 +6,6 @@ qbitorrent:
   url: https://qbitorrenturl.com
   user: user
   password: pass
+pushover:
+  token: aaaa
+  userKey: aaaaa

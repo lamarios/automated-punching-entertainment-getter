@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/anaskhan96/soup"
 	"github.com/autobrr/go-qbittorrent"
+	"github.com/gregdel/pushover"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"log"
@@ -51,10 +52,16 @@ type QbitorrentConfig struct {
 	Password string `yaml:"password"`
 }
 
+type PushoverConfig struct {
+	Token   string `yaml:"token"`
+	UserKey string `yaml:"userKey"`
+}
+
 type Config struct {
 	DataFile   string           `yaml:"dataFile"`
 	Prowlarr   ProwlarrConfig   `yaml:"prowlarr"`
 	Qbitorrent QbitorrentConfig `yaml:"qbitorrent"`
+	Pushover   PushoverConfig   `yaml:"pushover"`
 }
 
 var (
@@ -77,6 +84,7 @@ func main() {
 	UserConfig = config
 
 	last, next, err := getLastAndNextEvent()
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -91,6 +99,25 @@ func main() {
 		log.Fatal(err)
 	}
 
+}
+
+func sendDownloadNotification(event Event, eventType EventType) error {
+	// Create a new pushover app with a Token
+	app := pushover.New(UserConfig.Pushover.Token)
+
+	// Create a new recipient
+	recipient := pushover.NewRecipient(UserConfig.Pushover.UserKey)
+
+	// Create the message to send
+	message := pushover.NewMessageWithTitle(eventType.Name+" sent to download client", event.Name)
+
+	// Send the message to the recipient
+	_, err := app.SendMessage(message, recipient)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func loadConfig() (config Config, err error) {
@@ -176,6 +203,7 @@ func downloadEvent(event Event) (err error) {
 			err = addTorrent(earlyPrelims)
 			if err == nil {
 				event.EarlyPrelimsDownloaded = true
+				sendDownloadNotification(event, EarlyPrelims)
 			}
 		}
 	}
@@ -186,6 +214,7 @@ func downloadEvent(event Event) (err error) {
 			err = addTorrent(prelims)
 			if err == nil {
 				event.PrelimsDownloaded = true
+				sendDownloadNotification(event, Prelims)
 			}
 		}
 	}
@@ -196,6 +225,7 @@ func downloadEvent(event Event) (err error) {
 			err = addTorrent(mainCard)
 			if err == nil {
 				event.MainCardDownloaded = true
+				sendDownloadNotification(event, MainCard)
 			}
 		}
 	}
