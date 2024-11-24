@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ufc-downloader.iml" filepath="$PROJECT_DIR$/ufc-downloader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/automated-punching-entertainment-getter.iml" filepath="$PROJECT_DIR$/automated-punching-entertainment-getter.iml" />
     </modules>
   </component>
 </project>
